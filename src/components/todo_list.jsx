@@ -1,64 +1,30 @@
-import { useState } from "react";
-import { Input } from "./Input";
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AddFavorite, DeleteElement } from '../redux/TodoSlice';
+import { Input } from './Input';
 
-export const Kwest = () => {
-    const [kwest, setKwest] = useState([
-        {favorite: false, text: "Купить продукты"},
-        {favorite: false, text: "Купить бананы"},
-        {favorite: false, text: "Купить машину"},
-        {favorite: false, text: "Купить дом"},
-        {favorite: false, text: "Купить участок"},
-    ])
+export const Todos = () => {
+  const dispatch = useDispatch();
+  const todos = useSelector((state) => state.todos.todos);
 
-    // ____________________Delete______________________
-    const DeleteElement = (ind) => {
-        const Delete = kwest.filter((element, index) => {
-            if (ind === index) {
-                return false
-            } else {
-                return true
-            }
-        })
-        setKwest(Delete)
-    }
-
-    // ____________________Add-Favorite_______________
-    const AddFavorite = (indexOfList) => {
-        const Add = kwest.map((item, index) => {
-            if(indexOfList === index) {
-                return {
-                    ...item,
-                    favorite: !item.favorite
-                }
-            }else {
-                return item
-            }
-        })
-        setKwest([...Add])
-    }
-
-    // ____________________Content____________________
-    const newKwest = kwest.map((text, index) => {
-        return(
-        <div className={text.favorite ? "section section2" : "section"} key={index}>
+  return (
+    <>
+      <Input />
+      {
+        todos.map((todo, index) => (
+        <div className={todo.favorite ? 'section section2' : 'section'} key={index}>
             <div className="star star2">
-                <button onClick={() => AddFavorite(index)}>★</button>
+            <button onClick={() => dispatch(AddFavorite({ index }))}>★</button>
             </div>
-
             <div className="text">
-                {text.text}
+            {todo.text}
             </div>
-
             <div className="delete">
-                <button onClick={() => DeleteElement(index)}>❌</button>
+            <button onClick={() => dispatch(DeleteElement({ index }))}>❌</button>
             </div>
         </div>
-    )
-})
-    return (
-        <>
-            <Input kwest={kwest} setKwest={setKwest} />
-            {newKwest}
-        </>
-        )
-}
+        ))
+      }
+    </>
+  );
+};

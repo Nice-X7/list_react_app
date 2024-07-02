@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AddElement } from '../redux/TodoSlice';
 
-export const Input = ({ kwest, setKwest }) => {
-  const [enter, setEnter] = useState("");
+export const Input = () => {
+  const dispatch = useDispatch();
+  const todos = useSelector((state) => state.todos.todos);
+  const [enter, setEnter] = useState('');
   const [disable, setDisable] = useState(false);
 
   useEffect(() => {
-    const isDuplicate = kwest.some(el => el.text === enter);
+    const isDuplicate = todos.some(el => el.text === enter);
     setDisable(isDuplicate);
-  }, [enter, kwest]);
+  }, [enter, todos]);
 
-  const textInInput = () => {
-    setKwest([{ favorite: false, text: enter }, ...kwest]);
-    setEnter("");
+  const handleAddTodo = () => {
+    if (enter.trim() !== '') {
+      dispatch(AddElement({ text: enter, favorite: false }));
+      setEnter('');
+    }
   };
 
   return (
@@ -20,12 +26,12 @@ export const Input = ({ kwest, setKwest }) => {
         type="text"
         placeholder="Введите текст..."
         value={enter}
-        onChange={(a) => setEnter(a.target.value)}
+        onChange={(e) => setEnter(e.target.value)}
       />
       <button
-        onClick={textInInput}
+        onClick={handleAddTodo}
         disabled={disable}
-        className={disable ? "disable" : ""}
+        className={disable ? 'disable' : ''}
       >
         Добавить
       </button>
